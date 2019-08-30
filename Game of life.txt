@@ -1,0 +1,174 @@
+/*
+ * Henrique Oliveira (260777704)
+ * A program that simulates a game of life
+ */
+import java.util.Arrays;
+
+public class GameOfLife{
+    
+    public static void main(String[]args){
+        
+    }
+    
+    //checking if the universe multi-dimensional array is valid
+    public static boolean isValidUniverse(int [][] universe){
+        
+        // checking if all sub-arrays are the same size
+        for(int i=0; i<universe.length; i++){
+            if(universe[0].length != universe[i].length){
+                return false;
+            }
+        }
+        
+        //checking if all elements are either 1 or 0
+        for(int i=0; i<universe.length; i++){
+            for(int j=0; j<universe[i].length; j++){
+                if(universe[i][j] != 1 && universe[i][j] != 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public static void displayUniverse(int[][] universe){
+        int width = universe[0].length +2;
+        int height = universe.length +2;
+        
+        //row loop
+        for(int i=0; i<height; i++){
+            
+            //for the last and first rows
+            if(i==0 || i== height -1){
+                
+                for(int j=0; j<width; j++){
+                    if(j==0 || j== width-1){
+                        System.out.print("+");
+                    }else{
+                        System.out.print("-");
+                    }
+                }
+                //area of potential life   
+            }else{
+                for(int v=0; v<width; v++){
+                    
+                    
+                    if(v==0 || v== width-1){
+                        System.out.print("|");
+                    }else{
+                        
+                        if(universe[i-1][v-1]== 1){
+                            System.out.print("*");
+                        }else{
+                            System.out.print(" ");
+                        }
+                        
+                    }
+                    
+                }
+                
+                
+            }
+            System.out.println();
+        }
+        
+    }
+    //A method that checks if a cell will live on or die in the next generation
+    public static int getNextGenCell(int[][] universe, int x, int y){
+        //variables that will determine the size and duration of our loop that will check all neighbouring cells
+        int height=3;
+        int width=3;
+        int startH=-1;
+        int startW=-1;
+        int neighbours=0;
+        
+        //Shifting the starting point and size of our loops if the cells border a wall
+        if(x==0 || x==universe.length-1){
+            height=2;
+            
+        }
+        if(x==0){
+            startH=0;
+        }
+        
+        if(y==0 || y== universe[0].length-1){
+            width=2;
+        }
+        if(y== 0){
+            startW=0;
+        }
+        
+        
+        //counting number of neighbours 
+        for(int i=0; i<height; i++){
+            for(int j=0; j<width; j++){
+                //looking for neighbours sorrounding our point
+                if(universe[x + startH +i][y + startW +j]==1){
+                    neighbours++;
+                    
+                }
+                
+            }               
+        }
+        //just making sure neighbours is not over counted
+        if(universe[x][y]==1){
+            neighbours--;
+        }
+        
+        //conditions of life or death for our cells
+        if(universe[x][y]==1){
+            if(neighbours < 2){
+                return 0;
+            }
+            if(neighbours > 3){
+                return 0;
+            }
+            if(neighbours==2 || neighbours==3){
+                return 1;
+            }
+        }
+        if(universe[x][y]==0){
+            
+            if(neighbours==3){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+        
+        return 0; 
+        
+    }
+    //A method that gets the next generation of an universe
+    public static int[][] getNextGenUniverse(int[][] universe){
+        int[][] newU= new int[universe.length][universe[0].length];
+        
+        //looping through all current cells and storing their next generation condition
+        for(int i=0; i<universe.length; i++){
+            for(int j=0; j<universe[0].length; j++){
+                newU[i][j]= getNextGenCell(universe, i, j);
+                
+            }
+        }
+        
+        return newU;
+    }
+    //a method that simulates the number of generations of an universe of your choice
+    public static void simulateNGenerations(int[][]universe, int n){
+        int[][] newU= universe;
+        
+        //making sure our universe is valid
+        if(isValidUniverse(universe)==false){
+            throw new IllegalArgumentException("The elements of the sub-array are not 1 or 0, or the sub-arrays are not of the same length");
+        }else{
+            System.out.println("Original seed");
+            displayUniverse(universe);
+        }
+        //displaying all subsequent generations of your choice
+        for(int i=0; i<n; i++){
+            System.out.println("Generation " + (i+1));
+            newU= getNextGenUniverse(newU);
+            displayUniverse(newU);
+        }
+    }
+}
