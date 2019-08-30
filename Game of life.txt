@@ -1,6 +1,6 @@
 /*
  * Henrique Oliveira (260777704)
- * A program that simulates a game of life
+ * A program that simulates a game of life (this is a program for COMP 202)
  */
 import java.util.Arrays;
 
